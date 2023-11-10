@@ -34,6 +34,8 @@ class TextformatterFootnotes extends Textformatter
 
     // hah - when I added an example of using this textformatter to the help pages
     // it just turned it into a footnote... let's not apply it to admin pages.
+
+    // TODO it might be nice to be able to choose templates to apply this to.
     if($this->page->template=='admin'){ return false; };
 
 
@@ -81,6 +83,9 @@ class TextformatterFootnotes extends Textformatter
     if (!preg_match_all('/\[\[(.*?)\]\]/', $str, $matches)) return "no matches";
     $tick = 1;
 
+
+    // TODO - this is a repeat of the markup in the format function
+    // so should be encapsulated ...
     $footnote_list = '<ol class="footnotes">';
 
     foreach ($matches[0] as $key => $line) {
