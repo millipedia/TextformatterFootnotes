@@ -1,0 +1,125 @@
+<?php namespace ProcessWire;
+
+/**
+ * Pulls out text in [[double square brackets ]] to create footnotes 
+ * and creates links to table
+ * 
+ * You can also use the functions footnote_list and footnote_content to grab the list and anchored content separately.
+ * 
+ * stephen @ millipedia
+ **/
+
+class TextformatterFootnotes extends Textformatter
+{
+
+  public static function getModuleInfo()
+  {
+    return [
+      'author' => 'Stephen @ millipedia',
+      'title' => 'Footnotes',
+      'summary' => 'Marks up footnotes.',
+      'version' => '0.0.1',
+    ];
+  }
+
+  /**
+   * This is the function that gets added if you use this as a normal Text Formatter
+   * 
+   */
+
+  public function format(&$str)
+  {
+
+    if (strpos($str, '[[') === false) return;
+
+    // hah - when I added an example of using this textformatter to the help pages
+    // it just turned it into a footnote... let's not apply it to admin pages.
+    if($this->page->template=='admin'){ return false; };
+
+
+    if (!preg_match_all('/\[\[(.*?)\]\]/', $str, $matches)) return;
+
+    $tick = 1;
+
+    $footnote_list='';
+    $footnote_list.='<hr/>';
+    $footnote_list.= '<h2 class="footnotes_heading">Footnotes</h2>';
+    $footnote_list.= '<ol class="footnotes">';
+
+      foreach ($matches[0] as $key => $line) {
+
+        $footnote_item = str_replace('[[', '', $line);
+        $footnote_item = str_replace(']]', '', $footnote_item);
+
+        $footnote_anchor = ' <sup><a href="' . $this->page->url . '#footnote_' . $tick . '" class="footnote_link">' . $tick . '</a></sup>';
+      $footnote_list .= '<li id="footnote_' . $tick . '">' . $footnote_item . '</li>';
+
+        $str = str_replace($line, $footnote_anchor, $str);
+
+        $tick++;
+      }
+
+    $footnote_list .= '</ol>';
+
+    // append the list of footnotes to the er foot of the content.
+    $str.=$footnote_list;
+
+  }
+
+	/**
+   * Pass the field to footnote_list to extract a list of footnotes.
+   *  
+   * NB - if you use this then make sure you haven't added the TextFormatter to the field.
+   */
+
+  public function footnote_list($str)
+  {
+
+    if (strpos($str, '[[') === false) return;
+
+
+    if (!preg_match_all('/\[\[(.*?)\]\]/', $str, $matches)) return "no matches";
+    $tick = 1;
+
+    $footnote_list = '<ol class="footnotes">';
+
+    foreach ($matches[0] as $key => $line) {
+
+      $footnote_item = str_replace('[[', '', $line);
+      $footnote_item = str_replace(']]', '', $footnote_item);
+
+      $footnote_list .= '<li id="footnote_' . $tick . '">' . $footnote_item . '</li>';
+
+      // $str = str_replace($line, $footnote_anchor, $str);
+    }
+
+    $footnote_list .= '</ol>';
+
+    return $footnote_list;
+  }
+
+
+  public function footnote_content($str)
+  {
+
+    if (strpos($str, '[[') === false) return;
+
+    if (!preg_match_all('/\[\[(.*?)\]\]/', $str, $matches)) return;
+
+    $tick = 1;
+
+    foreach ($matches[0] as $key => $line) {
+
+      $footnote_no = str_replace('[', '', $line);
+      $footnote_no = str_replace(']', '', $footnote_no);
+
+      $footnote_anchor = ' <sup><a href="' . $this->page->url . '#footnote_' . $tick . '" class="footnote_link">' . $tick . '</a></sup>';
+
+      $str = str_replace($line, $footnote_anchor, $str);
+
+      $tick++;
+    }
+
+	return $str; 
+  }
+}
