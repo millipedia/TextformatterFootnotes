@@ -44,7 +44,7 @@ class TextformatterFootnotes extends Textformatter
     $tick = 1;
 
     $footnote_list='';
-    $footnote_list.='<hr/>';
+    $footnote_list.='<hr class="footnotes_hr" />';
     $footnote_list.= '<h2 class="footnotes_heading">Footnotes</h2>';
     $footnote_list.= '<ol class="footnotes">';
 
@@ -53,8 +53,8 @@ class TextformatterFootnotes extends Textformatter
         $footnote_item = str_replace('[[', '', $line);
         $footnote_item = str_replace(']]', '', $footnote_item);
 
-        $footnote_anchor = ' <sup><a href="' . $this->page->url . '#footnote_' . $tick . '" class="footnote_link">' . $tick . '</a></sup>';
-      $footnote_list .= '<li id="footnote_' . $tick . '">' . $footnote_item . '</li>';
+        $footnote_anchor = ' <sup><a href="#footnote_' . $tick . '" class="footnote_link">' . $tick . '</a></sup>';
+      	$footnote_list .= '<li id="footnote_' . $tick . '">' . $footnote_item . '</li>';
 
         $str = str_replace($line, $footnote_anchor, $str);
 
