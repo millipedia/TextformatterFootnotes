@@ -56,7 +56,13 @@ class TextformatterFootnotes extends Textformatter
         $footnote_anchor = ' <sup><a href="#footnote_' . $tick . '" class="footnote_link">' . $tick . '</a></sup>';
       	$footnote_list .= '<li id="footnote_' . $tick . '">' . $footnote_item . '</li>';
 
-        $str = str_replace($line, $footnote_anchor, $str);
+		// replace just the first occurence of the match.
+       // $str = str_replace($line, $footnote_anchor, $str);
+
+		$pos = strpos($str, $line);
+		if ($pos !== false) {
+			$str = substr_replace($str, $footnote_anchor, $pos, strlen($line));
+		}
 
         $tick++;
       }
